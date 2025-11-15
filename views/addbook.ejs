@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Page title for adding a new book -->
+    <title>Add a New Book</title>
+    <!-- Link to the main CSS stylesheet for styling -->
+    <link rel="stylesheet" type="text/css" href="/main.css">
+</head>
+<body>
+    <!-- Main heading for the add book page -->
+    <h1>Add a New Book</h1>
+    <!-- Form to add a new book, submits to '/books/bookadded' using POST method -->
+    <form method="POST" action="/books/bookadded">
+        <!-- Input field for the book's name, required -->
+        <p>Book Name: <input id="name" type="text" name="name" required /></p>
+        <!-- Input field for the book's price, required, allows decimal values, minimum 0 -->
+        <p>Price: <input id="price" type="number" name="price" step="0.01" min="0" required /></p>
+        <!-- Submit button to add the book -->
+        <input type="submit" value="Add Book" />
+    </form>
+</body>
+</html>

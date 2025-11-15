@@ -1,13 +1,23 @@
 <!doctype html>
 <html>
   <head>
+    <!-- Dynamic page title using shop name from shopData object -->
     <title>Welcome to <%=shopData.shopName%></title>
+    <!-- Link to external CSS stylesheet for styling -->
     <link rel="stylesheet"  type="text/css" href="/main.css" />
   </head>
   <body>
+    <!-- Main heading displaying the shop name dynamically -->
     <h1>Welcome to <%=shopData.shopName%></h1>
+    <!-- Navigation link to the About page -->
     <p><a href="about">About <%=shopData.shopName%></a></p>
+    <!-- Navigation link to the book search page -->
     <p><a href="books/search">Search for books</a></p>
+    <!-- Navigation link to view all books in the database -->
+    <p><a href="books/list">List all books</a></p>
+    <!-- Navigation link to the add book form -->
+    <p><a href="books/addbook">Add a new book</a></p>
+    <!-- Navigation link to the user registration form -->
     <p><a href="users/register">Register with us</a></p>
   </body>
 </html>

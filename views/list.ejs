@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book List</title>
+    <!-- Link to external CSS stylesheet for styling -->
+    <link rel="stylesheet" type="text/css" href="/main.css">
+</head>
+<body>
+    <h1>Available Books</h1>
+    <!-- Check if the availableBooks array has any items -->
+    <% if (availableBooks.length > 0) { %>
+        <!-- Create a table to display book information -->
+        <table>
+            <thead>
+                <tr>
+                    <!-- Table headers for book properties -->
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each book in the availableBooks array -->
+                <% availableBooks.forEach(function(book) { %>
+                    <tr>
+                        <!-- Display book ID -->
+                        <td><%= book.id %></td>
+                        <!-- Display book name -->
+                        <td><%= book.name %></td>
+                        <!-- Display book price with pound symbol -->
+                        <td>£<%= book.price %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <!-- Display message when no books are available -->
+        <p>No books available.</p>
+    <% } %>
+</body>
+</html>

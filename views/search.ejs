@@ -1,14 +1,21 @@
 <!doctype html>
 <html>
   <head>
+    <!-- Dynamic page title for search page -->
     <title>Search <%=shopData.shopName%></title>
+    <!-- Link to external CSS stylesheet for styling -->
     <link rel="stylesheet"  type="text/css" href="/main.css" />
   </head>
   <body>
+    <!-- Main heading for the search page -->
     <h1>Search <%=shopData.shopName%></h1>
+    <!-- Search form using GET method to submit search query -->
     <form action="search_result" method="GET">
+      <!-- Prompt asking user what book they're looking for -->
       <p>What book do you want?</p>
+      <!-- Text input field for entering search keyword -->
       <input id="search-box" type="text" name="search_text">
+      <!-- Submit button to execute the search -->
       <input type="submit" value="Search" >
     </form>
   </body>
