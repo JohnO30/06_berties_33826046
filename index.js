@@ -29,7 +29,9 @@ app.locals.shopData = {
     shopName: process.env.SHOP_NAME || "Bertie's Books"
 };
 
+
 // Define the database connection pool
+// Define the database connection pool using environment variables
 const db = mysql.createPool({
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "berties_books_app",
@@ -39,6 +41,7 @@ const db = mysql.createPool({
     connectionLimit: 10,
     queueLimit: 0,
 });
+
 
 // Expose DB globally
 global.db = db;

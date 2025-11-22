@@ -2,6 +2,11 @@
 const express = require("express");
 const router = express.Router();
 
+// Show add book form
+router.get("/addbook", (req, res, next) => {
+  res.render("addbook.ejs");
+});
+
 // Show search page
 router.get("/search", (req, res, next) => {
   res.render("search.ejs");

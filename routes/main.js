@@ -14,9 +14,4 @@
     res.render("about.ejs");
   });
 
-  // Add-book page
-  router.get("/books/addbook", (req, res, next) => {
-    res.render("addbook.ejs");
-  });
-
   module.exports = router;
