@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User List</title>
+    <!-- Link to external CSS stylesheet for styling -->
+    <link rel="stylesheet" type="text/css" href="/main.css">
+</head>
+<body>
+    <h1>Registered Users</h1>
+    <!-- Check if the available Users array has any items -->
+    <% if (availableUsers.length > 0) { %>
+        <!-- Create a table to display user information -->
+        <table>
+            <thead>
+                <tr>
+                    <!-- Table headers for user properties -->
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each user in the availableUsers array -->
+                <% availableUsers.forEach(function(user) { %>
+                    <tr>
+                        <!-- Display user ID -->
+                        <td><%= user.id %></td>
+                        <!-- Display username -->
+                        <td><%= user.username %></td>
+                        <!-- Display first name -->
+                        <td><%= user.first_name %></td>
+                        <!-- Display last name -->
+                        <td><%= user.last_name %></td>
+                        <!-- Display email -->
+                        <td><%= user.email %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <!-- Display message when no users are registered -->
+        <p>No users registered yet.</p>
+    <% } %>
+</body>
+</html>

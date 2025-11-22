@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Audit History</title>
+    <!-- Link to external CSS stylesheet for styling -->
+    <link rel="stylesheet" type="text/css" href="/main.css">
+    <style>
+        .status-success {
+            color: green;
+            font-weight: bold;
+        }
+        .status-failed {
+            color: red;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Login Audit History</h1>
+    <p>This page shows all login attempts (successful and failed) in chronological order.</p>
+    
+    <!-- Check if the auditRecords array has any items -->
+    <% if (auditRecords.length > 0) { %>
+        <!-- Create a table to display audit information -->
+        <table>
+            <thead>
+                <tr>
+                    <!-- Table headers for audit properties -->
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Loop through each audit record -->
+                <% auditRecords.forEach(function(record) { %>
+                    <tr>
+                        <!-- Display audit ID -->
+                        <td><%= record.id %></td>
+                        <!-- Display username -->
+                        <td><%= record.username %></td>
+                        <!-- Display login time -->
+                        <td><%= new Date(record.login_time).toLocaleString() %></td>
+                        <!-- Display status with color coding -->
+                        <td class="status-<%= record.status %>"><%= record.status.toUpperCase() %></td>
+                        <!-- Display message -->
+                        <td><%= record.message %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+        
+        <p><strong>Total login attempts:</strong> <%= auditRecords.length %></p>
+        <p><strong>Successful logins:</strong> <%= auditRecords.filter(r => r.status === 'success').length %></p>
+        <p><strong>Failed logins:</strong> <%= auditRecords.filter(r => r.status === 'failed').length %></p>
+    <% } else { %>
+        <!-- Display message when no audit records exist -->
+        <p>No login attempts recorded yet.</p>
+    <% } %>
+</body>
+</html>

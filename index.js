@@ -4,9 +4,12 @@ var ejs = require('ejs')
 const path = require('path')
 var mysql = require('mysql2');
 
+// Load environment variables from .env file
+require('dotenv').config({ silent: true });
+
 // Create the express application object
 const app = express()
-const port = 8000
+const port = process.env.PORT || 8000
 
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
@@ -20,13 +23,13 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, 'public')))
 
 // Define our application-specific data
-app.locals.shopData = {shopName: "Bertie's Books"}
+app.locals.shopData = {shopName: process.env.SHOP_NAME || "Bertie's Books"}
 // Define the database connection pool
 const db = mysql.createPool({
-    host: 'localhost',
-    user: 'berties_books_app',
-    password: 'qwertyuiop',
-    database: 'berties_books',
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'berties_books_app',
+    password: process.env.DB_PASSWORD || 'qwertyuiop',
+    database: process.env.DB_NAME || 'berties_books',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
