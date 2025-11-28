@@ -1,3 +1,13 @@
+const redirectLogin = (req, res, next) => {
+  if (!req.session.userId) {
+    // Redirect to login page
+    res.redirect('./login');   
+  } else {
+     // carry on to the route handler
+    next();                   
+  }
+};
+
 // routes/users.js
 const express = require("express");
 const bcrypt = require("bcrypt");
@@ -56,7 +66,7 @@ router.post("/registered", function (req, res, next) {
 });
 
 // GET /users/list: list users (no passwords)
-router.get("/list", function (req, res, next) {
+router.get("/list", redirectLogin, function (req, res, next) {
   const sql = "SELECT username, first, last, email FROM users";
 
   db.query(sql, function (err, rows) {
@@ -120,6 +130,8 @@ router.post("/loggedin", function (req, res, next) {
       if (same) {
         logLoginAttempt(username, true);
         res.send("Login successful! Welcome, " + username);
+        // Save user session here, when login is successful
+       req.session.userId = req.body.username;
       } else {
         logLoginAttempt(username, false);
         res.send("Login failed: incorrect username or password.");
