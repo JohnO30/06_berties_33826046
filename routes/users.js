@@ -1,71 +1,96 @@
-const redirectLogin = (req, res, next) => {
-  if (!req.session.userId) {
-    // Redirect to login page
-    res.redirect('./login');   
-  } else {
-     // carry on to the route handler
-    next();                   
-  }
-};
-
 // routes/users.js
 const express = require("express");
 const bcrypt = require("bcrypt");
+const { check, validationResult } = require('express-validator');
 const router = express.Router();
 const db = global.db;
 const saltRounds = 10;
 
-// GET /users/register: show registration form
+
+// Authorisation 
+
+const redirectLogin = (req, res, next) => {
+  if (!req.session.userId) {
+    res.redirect('./login');
+  } else {
+    next();
+  }
+};
+
+// Login audit function
+
+function logLoginAttempt(username, success) {
+  const status = success ? 'SUCCESS' : 'FAIL';
+  const message = success ? 'Login successful' : 'Invalid username or password';
+
+  const sql = `
+    INSERT INTO login_audit (username, status, message)
+    VALUES (?, ?, ?)
+  `;
+
+  db.query(sql, [username, status, message], function (err) {
+    if (err) {
+      console.error("Error logging login attempt:", err);
+    }
+  });
+}
+
+// Get users/register
 router.get("/register", function (req, res, next) {
   res.render("register.ejs");
 });
 
-// POST /users/registered: hash password + save user
-router.post("/registered", function (req, res, next) {
-  const { username, first, last, email, password } = req.body;
+// Post users/registered
+router.post(
+  '/registered',
+  [
+    check('email').isEmail(),
+    check('username').isLength({ min: 5, max: 20 }),
+    check('password')
+      .isLength({ min: 8 })
+      .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/)
+  ],
+  function (req, res, next) {
 
-  const plainPassword = password;
+    const errors = validationResult(req);
 
-  bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
-    if (err) {
-      console.error("Error hashing password:", err);
-      return res.status(500).send("Error registering user.");
+    if (!errors.isEmpty()) {
+      return res.render('register.ejs', { errors: errors.array() });
     }
 
-    const sql = `
-      INSERT INTO users (username, first, last, email, hashedPassword)
-      VALUES (?, ?, ?, ?, ?)
-    `;
+    // Sanitised inputs 
+    const username = req.sanitize(req.body.username);
+    const first    = req.sanitize(req.body.first);
+    const last     = req.sanitize(req.body.last);
+    const email    = req.sanitize(req.body.email);
+    const password = req.body.password; // Do not sanitise passwords
 
-    db.query(
-      sql,
-      [username, first, last, email, hashedPassword],
-      function (err, result) {
-        if (err) {
-          console.error("Error inserting user:", err);
-          return res.status(500).send("Error saving user.");
-        }
-        let resultMsg =
-          "Hello " +
-          first +
-          " " +
-          last +
-          " you are now registered!  We will send an email to you at " +
-          email;
-
-        resultMsg +=
-          "<br>Your password is: " +
-          plainPassword +
-          " and your hashed password is: " +
-          hashedPassword;
-
-        res.send(resultMsg);
+    bcrypt.hash(password, saltRounds, function (err, hashedPassword) {
+      if (err) {
+        return res.status(500).send("Error hashing password.");
       }
-    );
-  });
-});
 
-// GET /users/list: list users (no passwords)
+      const sql = `
+        INSERT INTO users (username, first, last, email, hashedPassword)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+
+      db.query(
+        sql,
+        [username, first, last, email, hashedPassword],
+        function (err, result) {
+          if (err) {
+            return res.status(500).send("Error saving user.");
+          }
+
+          res.send("Registration successful for " + username);
+        }
+      );
+    });
+  }
+);
+
+// Get users/list
 router.get("/list", redirectLogin, function (req, res, next) {
   const sql = "SELECT username, first, last, email FROM users";
 
@@ -76,20 +101,12 @@ router.get("/list", redirectLogin, function (req, res, next) {
     }
 
     res.render("users_list.ejs", { users: rows });
-   });
+  });
 });
 
-// Helper: log login attempts
-function logLoginAttempt(username, success) {
-  const sql = "INSERT INTO login_audit (username, success) VALUES (?, ?)";
-  db.query(sql, [username, success], function (err) {
-    if (err) {
-      console.error("Error logging login attempt:", err);
-    }
-  });
-};
 
-// GET /users/login:login form
+// Get users/login
+
 router.get("/login", function (req, res, next) {
   res.send(`
     <h1>Login</h1>
@@ -101,7 +118,7 @@ router.get("/login", function (req, res, next) {
   `);
 });
 
-// POST /users/loggedin: check bcrypt password
+// 
 router.post("/loggedin", function (req, res, next) {
   const { username, password } = req.body;
 
@@ -114,7 +131,6 @@ router.post("/loggedin", function (req, res, next) {
     }
 
     if (rows.length === 0) {
-      // No such user
       logLoginAttempt(username, false);
       return res.send("Login failed: incorrect username or password.");
     }
@@ -129,9 +145,11 @@ router.post("/loggedin", function (req, res, next) {
 
       if (same) {
         logLoginAttempt(username, true);
+
+        // Session set before response (Lab 8a)
+        req.session.userId = username;
+
         res.send("Login successful! Welcome, " + username);
-        // Save user session here, when login is successful
-       req.session.userId = req.body.username;
       } else {
         logLoginAttempt(username, false);
         res.send("Login failed: incorrect username or password.");
@@ -140,18 +158,33 @@ router.post("/loggedin", function (req, res, next) {
   });
 });
 
-// GET /users/audit: show login audit history
-router.get("/audit", function (req, res, next) {
-  const sql = "SELECT * FROM login_audit ORDER BY timestamp DESC";
+
+// Get users/logout
+
+router.get("/logout", redirectLogin, function (req, res, next) {
+  req.session.destroy(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.send('You are now logged out. <a href="../">Home</a>');
+  });
+});
+
+// Get user/audit
+
+router.get("/audit", redirectLogin, function (req, res, next) {
+  const sql = "SELECT * FROM login_audit ORDER BY login_time DESC";
 
   db.query(sql, function (err, rows) {
     if (err) {
       console.error("Error fetching audit log:", err);
       return res.status(500).send("Error fetching audit log.");
     }
+
     res.render("audit.ejs", { logs: rows });
   });
 });
 
-// Export the router
+
+// Export router
 module.exports = router;

@@ -23,5 +23,12 @@
     <p><a href="users/login">Login</a></p>
     <!-- Navigation link to logout -->
     <p><a href="users/logout">Logout</a></p>
+    <!-- Conditional rendering based on user session status -->
+    <% if (!session || !session.userId) { %>
+      <p><a href="/users/login">Login</a></p>
+    <% } else { %>
+      <p><a href="/users/logout">Logout</a></p>
+    <% } %>
+
   </body>
 </html>

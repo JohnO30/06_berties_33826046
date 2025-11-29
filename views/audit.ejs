@@ -4,6 +4,7 @@
     <title>Login audit - <%= shopData.shopName %></title>
     <link rel="stylesheet" type="text/css" href="/main.css" />
   </head>
+
   <body>
     <h1>Login audit log for <%= shopData.shopName %></h1>
 
@@ -11,19 +12,28 @@
       <p>No login attempts recorded yet.</p>
     <% } else { %>
       <table>
-        <tr>
-          <th>Time</th>
-          <th>Username</th>
-          <th>Result</th>
-        </tr>
-        <% logs.forEach(function (r) { %>
+        <thead>
           <tr>
-            <td><%= r.timestamp %></td>
-            <td><%= r.username || "(unknown)" %></td>
-            <td><%= r.success ? "SUCCESS" : "FAIL" %></td>
+            <th>Time</th>
+            <th>Username</th>
+            <th>Status</th>
+            <th>Message</th>
           </tr>
-        <% }); %>
+        </thead>
+
+        <tbody>
+          <% logs.forEach(function (r) { %>
+            <tr>
+              <td><%= r.login_time %></td>
+              <td><%= r.username || "(unknown)" %></td>
+              <td><%= r.status %></td>
+              <td><%= r.message %></td>
+            </tr>
+          <% }); %>
+        </tbody>
       </table>
     <% } %>
+
+    <p><a href="/">Back to Home</a></p>
   </body>
 </html>

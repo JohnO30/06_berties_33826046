@@ -1,17 +1,18 @@
-# Create database script for Berties books
+-- Create database script for Berties Books
 
-# Create the database
+-- Create the database
 CREATE DATABASE IF NOT EXISTS berties_books;
 USE berties_books;
 
-# Create the tables
+-- Create the books table
 CREATE TABLE IF NOT EXISTS books (
-    id     INT AUTO_INCREMENT,
-    name   VARCHAR(50),
-    price  DECIMAL(5, 2),
-    PRIMARY KEY(id));
+    id INT AUTO_INCREMENT,
+    name VARCHAR(50),
+    price DECIMAL(5, 2),
+    PRIMARY KEY (id)
+);
 
-# Users table
+-- Create the users table
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL UNIQUE,
@@ -19,14 +20,15 @@ CREATE TABLE IF NOT EXISTS users (
     last VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     hashedPassword VARCHAR(255) NOT NULL,
-    PRIMARY KEY(id)
+    PRIMARY KEY (id)
 );
 
-# Login audit table
+-- Create the login audit table (LAB 8 COMPLIANT)
 CREATE TABLE IF NOT EXISTS login_audit (
     id INT AUTO_INCREMENT,
     username VARCHAR(50),
-    success BOOLEAN NOT NULL,
-    timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY(id)
+    login_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(20) NOT NULL,
+    message VARCHAR(255),
+    PRIMARY KEY (id)
 );
