@@ -27,8 +27,10 @@ A dynamic web application for managing and browsing books, built with Node.js, E
 
 ## Available Routes
 
+### Web Pages
 - `/` - Home page with navigation links
 - `/about` - About the bookshop
+- `/weather` - Weather information for any city
 - `/books/search` - Search for books
 - `/books/list` - View all books
 - `/books/addbook` - Add a new book
@@ -36,7 +38,43 @@ A dynamic web application for managing and browsing books, built with Node.js, E
 - `/users/register` - User registration
 - `/users/list` - View all registered users
 - `/users/login` - User login
+- `/users/logout` - Logout
 - `/users/audit` - View login audit history
+
+### API Endpoints
+
+#### GET /api/books
+Returns book data in JSON format with optional filtering and sorting capabilities.
+
+**Query Parameters:**
+- `search` - Search for books by name (partial match)
+  - Example: `/api/books?search=world`
+- `minprice` - Filter books with price greater than or equal to specified value
+  - Example: `/api/books?minprice=5`
+- `maxprice` - Filter books with price less than or equal to specified value
+  - Example: `/api/books?maxprice=10`
+- `sort` - Sort results by field (accepts: `name` or `price`)
+  - Example: `/api/books?sort=name`
+
+**Examples:**
+```
+/api/books                                    # Get all books
+/api/books?search=world                       # Search for books containing "world"
+/api/books?minprice=5&maxprice=10            # Books between £5 and £10
+/api/books?sort=price                         # All books sorted by price
+/api/books?search=world&minprice=5&sort=name # Combined filters
+```
+
+**Response Format:**
+```json
+[
+  {
+    "id": 1,
+    "name": "Book Title",
+    "price": 9.99
+  }
+]
+```
 
 ## Setup Instructions
 
