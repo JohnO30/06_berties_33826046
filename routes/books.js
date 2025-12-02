@@ -31,8 +31,8 @@ router.get('/search-result', function (req, res, next) {
   });
 });
 
-// List all books (PROTECTED)
-router.get('/list', redirectLogin, function (req, res, next) {
+// List all books (PUBLIC - no login required)
+router.get('/list', function (req, res, next) {
   const sqlquery = "SELECT * FROM books";
 
   db.query(sqlquery, (err, result) => {
