@@ -5,7 +5,7 @@ const db = global.db;
 // Authorisation middleware
 const redirectLogin = (req, res, next) => {
   if (!req.session.userId) {
-    res.redirect('/users/login');
+    res.redirect('../users/login');
   } else {
     next();
   }
