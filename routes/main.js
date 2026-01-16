@@ -15,7 +15,7 @@ router.get('/about', function (req, res, next) {
 
 // Weather page route
 router.get('/weather', function (req, res, next) {
-  let apiKey = '13400a408d993046228e527c0dd4850e';
+  let apiKey = '';
   let city = req.query.city || 'london';
   let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
                      
